@@ -11,7 +11,6 @@ app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 
 app.post("/scrape", async (req, res) => {
     const { url, Browser_WS } = req.body;
-    console.log(req.body);
     
     // Validate URL
     try {

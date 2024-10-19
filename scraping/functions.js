@@ -21,6 +21,7 @@ async function getData(page) {
         let resultObject = [];
         resultList.map((result, index) => {
             if (result['resultlist.realEstate'].privateOffer == 'true') {
+
                 let gallery = [];
                 const attachment = result['resultlist.realEstate'].galleryAttachments.attachment
                 if (Array.isArray(attachment)) {
@@ -36,6 +37,16 @@ async function getData(page) {
                     gallery.push(image.substring(0, endIndex).trim())
                 }
 
+                let features=[]
+                result['resultlist.realEstate'].builtInKitchen == 'true' && features.push(result['resultlist.realEstate'].builtInKitchen)
+                result['resultlist.realEstate'].balcony == 'true' && features.push(result['resultlist.realEstate'].balcony)
+                result['resultlist.realEstate'].garden == 'true' && features.push(result['resultlist.realEstate'].courtage.hasCourtage)
+                result['resultlist.realEstate'].courtage.hasCourtage == 'YES' && features.push(result['resultlist.realEstate'].)
+                result['resultlist.realEstate'].lift == 'true' && features.push(result['resultlist.realEstate'].lift)
+                result['resultlist.realEstate'].guestToilet == 'true' && features.push(result['resultlist.realEstate'].guestToilet)
+                result['resultlist.realEstate'].cellar == 'true' && features.push(result['resultlist.realEstate'].cellar)
+                result['resultlist.realEstate'].isBarrierFree == 'true' & features.push(result['resultlist.realEstate'].isBarrierFree)
+
                 resultObject.push(
                     {
                         id: index,
@@ -47,23 +58,17 @@ async function getData(page) {
                         livingSpace: result['resultlist.realEstate'].livingSpace + 'm²',
                         numberOfRooms: result['resultlist.realEstate'].numberOfRooms,
                         constructionYear: result['resultlist.realEstate'].constructionYear,
-                        estateInfo: {
-                            builtInKitchen: result['resultlist.realEstate'].builtInKitchen,
-                            balcony: result['resultlist.realEstate'].balcony,
-                            garden: result['resultlist.realEstate'].garden,
-                            hasCourtage: result['resultlist.realEstate'].courtage.hasCourtage,
-                            lift: result['resultlist.realEstate'].lift,
-                            guestToilet: result['resultlist.realEstate'].guestToilet,
-                            cellar: result['resultlist.realEstate'].cellar,
-                            isBarrierFree: result['resultlist.realEstate'].isBarrierFree,
-                        },
+                        estateInfo:features,
                         monthlyRate: result['resultlist.realEstate'].monthlyRate,
                         modificationDate: result["@modification"],
                     })
             }
         })
+        
         return resultObject
     } catch (error) {
+        console.log(error);
+        
         return new Error(error)
     }
 
