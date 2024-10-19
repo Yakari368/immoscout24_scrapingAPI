@@ -38,14 +38,14 @@ async function getData(page) {
                 }
 
                 let features=[]
-                result['resultlist.realEstate'].builtInKitchen == 'true' && features.push(result['resultlist.realEstate'].builtInKitchen)
-                result['resultlist.realEstate'].balcony == 'true' && features.push(result['resultlist.realEstate'].balcony)
-                result['resultlist.realEstate'].garden == 'true' && features.push(result['resultlist.realEstate'].courtage.hasCourtage)
-                result['resultlist.realEstate'].courtage.hasCourtage == 'YES' && features.push(result['resultlist.realEstate'].)
-                result['resultlist.realEstate'].lift == 'true' && features.push(result['resultlist.realEstate'].lift)
-                result['resultlist.realEstate'].guestToilet == 'true' && features.push(result['resultlist.realEstate'].guestToilet)
-                result['resultlist.realEstate'].cellar == 'true' && features.push(result['resultlist.realEstate'].cellar)
-                result['resultlist.realEstate'].isBarrierFree == 'true' & features.push(result['resultlist.realEstate'].isBarrierFree)
+                result['resultlist.realEstate'].builtInKitchen == 'true' && features.push('Built in Kitchen')
+                result['resultlist.realEstate'].balcony == 'true' && features.push('Balcony')
+                result['resultlist.realEstate'].garden == 'true' && features.push('Garden')
+                result['resultlist.realEstate'].courtage.hasCourtage == 'YES' && features.push('has Courtage')
+                result['resultlist.realEstate'].lift == 'true' && features.push('Lift')
+                result['resultlist.realEstate'].guestToilet == 'true' && features.push('Guest Toilet')
+                result['resultlist.realEstate'].cellar == 'true' && features.push('Cellar')
+                result['resultlist.realEstate'].isBarrierFree == 'true' & features.push('is Barrier Free')
 
                 resultObject.push(
                     {
