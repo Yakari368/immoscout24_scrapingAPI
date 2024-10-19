@@ -36,7 +36,9 @@ async function getData(page) {
                 } else if (attachment.urls) {
                     const image = attachment.urls[0].url["@href"]
                     const endIndex = image.indexOf('ORIG');
-                    gallery.push(image.substring(0, endIndex).trim())
+                    gallery.push({
+                        "url":image.substring(0, endIndex).trim(),
+                    })
                 }
 
                 let features=[]
