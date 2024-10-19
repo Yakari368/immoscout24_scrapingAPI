@@ -28,7 +28,9 @@ async function getData(page) {
                     attachment.map(image => {
                         image = image.urls[0].url["@href"]
                         const endIndex = image.indexOf('ORIG');
-                        gallery.push(image.substring(0, endIndex).trim())
+                        gallery.push({
+                            "url":image.substring(0, endIndex).trim(),
+                        })
 
                     })
                 } else if (attachment.urls) {
