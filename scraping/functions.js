@@ -3,11 +3,11 @@ const puppeteer = require("puppeteer-core");
 async function close_popup(page) {
     try {
         const close_btn = await page.waitForSelector('button[data-testid="uc-accept-all-button"]', { timeout: 25000, visible: true });
-        // console.log("Popup appeared! Closing...");
+        console.log("Popup appeared! Closing...");
         await close_btn.click();
-        // console.log("Popup closed!");
+        console.log("Popup closed!");
     } catch (e) {
-        // console.log("Popup didn't appear.");
+        console.log("Popup didn't appear.");
     }
 }
 
@@ -53,7 +53,7 @@ async function getData(page) {
 
                 resultObject.push(
                     {
-                        id: result.realEstateId,
+                        id: index,
                         title: result['resultlist.realEstate'].title,
                         address: result['resultlist.realEstate'].address,
                         contactDetails: result['resultlist.realEstate'].contactDetails,
@@ -65,15 +65,15 @@ async function getData(page) {
                         estateInfo:features,
                         monthlyRate: result['resultlist.realEstate'].monthlyRate,
                         modificationDate: result["@modification"],
-                        url:`https://www.immobilienscout24.de/expose/${result.realEstateId}`
                     })
             }
         })
         
-        return {code:'201',resultObject}
+        return resultObject
     } catch (error) {
-        // console.log(error);
-        return {code :'501', error}
+        console.log(error);
+        
+        return new Error(error)
     }
 
 }
