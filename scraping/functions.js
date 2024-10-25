@@ -65,6 +65,7 @@ async function getData(page) {
                         estateInfo:features,
                         monthlyRate: result['resultlist.realEstate'].monthlyRate,
                         modificationDate: result["@modification"],
+                        url:`https://www.immobilienscout24.de/expose/${result.realEstateId}`
                     })
             }
         })
