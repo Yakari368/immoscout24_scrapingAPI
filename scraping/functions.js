@@ -79,8 +79,10 @@ async function getData(page) {
 }
 
 async function getSonstiges(page) {
-    const divText = await page.$eval('pre.is24qa-sonstiges', element => element.textContent);
-    console.log('Text inside the div:', divText);
-    return divText
+    const allText = await page.evaluate(() => {
+        const grandfatherDiv = document.querySelector('div.content-section-first'); // Replace with your CSS selector
+        return grandfatherDiv ? grandfatherDiv.textContent.trim().replace('\n','').replace(/\s+/g, ' ').replace(/{[^}]*}/g, '').trim() : null;
+      });
+    return allText
 }
 module.exports = { getData, close_popup, getSonstiges }
