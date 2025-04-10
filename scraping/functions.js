@@ -21,7 +21,6 @@ async function getData(page) {
         let resultObject = [];
         resultList.map((result, index) => {
             if (result['resultlist.realEstate'].privateOffer == 'true') {
-
                 let gallery = [];
                 const attachment = result['resultlist.realEstate'].galleryAttachments.attachment
                 if (Array.isArray(attachment)) {
@@ -79,4 +78,9 @@ async function getData(page) {
 
 }
 
-module.exports = { getData, close_popup }
+async function getSonstiges(page) {
+    const divText = await page.$eval('pre.is24qa-sonstiges', element => element.textContent);
+    console.log('Text inside the div:', divText);
+    return divText
+}
+module.exports = { getData, close_popup, getSonstiges }
