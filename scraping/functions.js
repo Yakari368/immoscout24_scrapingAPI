@@ -32,7 +32,7 @@ async function getData(page) {
                         })
 
                     })
-                } else if (attachment.urls) {
+                } else if (attachment?.urls) {
                     const image = attachment.urls[0].url["@href"]
                     const endIndex = image.indexOf('ORIG');
                     gallery.push({
