@@ -22,7 +22,7 @@ async function getData(page) {
         resultList.map((result, index) => {
             if (result['resultlist.realEstate'].privateOffer == 'true') {
                 let gallery = [];
-                const attachment = result['resultlist.realEstate'].galleryAttachments.attachment
+                const attachment = result['resultlist.realEstate'].galleryAttachments?.attachment
                 if (Array.isArray(attachment)) {
                     attachment.map(image => {
                         image = image.urls[0].url["@href"]
