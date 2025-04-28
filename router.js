@@ -135,7 +135,7 @@ app.post("/sendMessage", async (req, res) => {
     }
 
     try {
-        res.status(200)
+        res.status(200).send();
         const data= await sendMessage(url,Browser_WS, message, Salutation, Forename, Surname, Company, Email, phone)
     } catch (error) {
         console.log(error);
