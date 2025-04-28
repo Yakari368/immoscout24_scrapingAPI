@@ -1,13 +1,18 @@
 const puppeteer = require("puppeteer-core");
+const { setTimeout } = require('node:timers/promises');
 
 async function close_popup(page) {
     try {
-        const close_btn = await page.waitForSelector('button[data-testid="uc-accept-all-button"]', { timeout: 25000, visible: true });
+        await setTimeout(25000);
+        await page.waitForSelector('#usercentrics-root');
+        const shadowHost = await page.$('#usercentrics-root');
+        const shadowRoot = await shadowHost.evaluateHandle(el => el.shadowRoot);
+        const close_btn = await shadowRoot.$('button[data-testid="uc-accept-all-button"]');
         console.log("Popup appeared! Closing...");
         await close_btn.click();
         console.log("Popup closed!");
     } catch (e) {
-        console.log("Popup didn't appear.");
+        console.log("Popup didn't appear.",e);
     }
 }
 
@@ -84,5 +89,25 @@ async function getSonstiges(page) {
         return grandfatherDiv ? grandfatherDiv.textContent.trim().replace('\n','').replace(/\s+/g, ' ').replace(/{[^}]*}/g, '').trim() : null;
       });
     return allText
+    }
+
+async function fillForm(page, message, Salutation, Forename, Surname, Company, Email, phone) {
+  console.log("loking for button...");
+  await page.waitForSelector('button[data-testid="contact-button"]');
+  console.log("clicking for button...");
+  await page.click('button[data-testid="contact-button"]');
+
+  console.log("filling the form...");
+  await page.screenshot({ path: 'screenshot.png' });
+  await page.waitForSelector('#message');
+  await page.type('#message', message ); 
+  await page.select('select[data-testid="salutation"]', Salutation);
+  await page.type('input[data-testid="firstName"]', Forename);
+  await page.type('input[data-testid="lastName"]', Surname);
+  await page.type('input[data-testid="company"]', Company);
+  await page.type('input[data-testid="emailAddress"]', Email);
+  await page.type('input[data-testid="phoneNumber"]', phone);
+  console.log('filling form done');
 }
-module.exports = { getData, close_popup, getSonstiges }
+
+module.exports = { getData, close_popup, getSonstiges, fillForm }
