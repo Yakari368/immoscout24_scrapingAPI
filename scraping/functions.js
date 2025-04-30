@@ -3,7 +3,7 @@ const { setTimeout } = require('node:timers/promises');
 
 async function close_popup(page) {
     try {
-        await setTimeout(25000);
+        await setTimeout(35000);
         await page.waitForSelector('#usercentrics-root');
         const shadowHost = await page.$('#usercentrics-root');
         const shadowRoot = await shadowHost.evaluateHandle(el => el.shadowRoot);
