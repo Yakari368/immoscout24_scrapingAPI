@@ -1,5 +1,5 @@
 const express = require("express");
-const { scrape,isAvailable, scrapeSonstiges, sendMessage } = require("./scraping/main");
+const { scrape,isAvailable, scrapeSonstiges, sendMessage,callWebhook } = require("./scraping/main");
 
 
 const app = express();
@@ -109,7 +109,7 @@ app.post("/sonstiges", async (req, res) => {
         
         res.status(500).json({ message: "Error accessing the URL" });
     }
-});
+}); 
 
 app.post("/sendMessage", async (req, res) => {
     const { url, Browser_WS, message, Salutation, Forename, Surname, Company, Email, phone} = req.body;
@@ -137,9 +137,19 @@ app.post("/sendMessage", async (req, res) => {
     try {
         res.status(200).send();
         const data= await sendMessage(url,Browser_WS, message, Salutation, Forename, Surname, Company, Email, phone)
+        callWebhook(url, {
+            baseID:'34567',
+            contactID:'34567',
+            statue:'success',
+        })
     } catch (error) {
         console.log(error);
-        
-        // res.status(500).json({ message: "Error accessing the URL" });
+        callWebhook(url, {
+            baseID:'34567',
+            contactID:'34567',
+            statue:'failed',
+            error:error.message,
+        })
+        res.status(500).json({ message: "Error accessing the URL" });
     }
 }); 
