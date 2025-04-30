@@ -150,6 +150,5 @@ app.post("/sendMessage", async (req, res) => {
             statue:'failed',
             error:error.message,
         })
-        res.status(500).json({ message: "Error accessing the URL" });
     }
 }); 
