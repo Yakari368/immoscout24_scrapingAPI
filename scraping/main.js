@@ -1,5 +1,23 @@
 const puppeteer = require("puppeteer-core");
+const axios = require('axios');
 const { close_popup,getData,getSonstiges,fillForm }=require("./functions");
+
+
+async function callWebhook(url, body, headers = {}) {
+  try {
+    const response = await axios.post(url, body, {
+      headers: {
+        'Content-Type': 'application/json',
+        ...headers
+      }
+    });
+    return response.data;
+  } catch (error) {
+    // Handle error as needed
+    throw error;
+  }
+}
+
 
 async function isAvailable(url,BROWSER_WS) {
     const browser = await puppeteer.connect({
@@ -69,4 +87,4 @@ async function sendMessage(url, BROWSER_WS, message, Salutation, Forename, Surna
     return JSONResult
 }
 
-module.exports = {scrape,isAvailable,scrapeSonstiges,sendMessage}
+module.exports = {scrape,isAvailable,scrapeSonstiges,sendMessage,callWebhook}
