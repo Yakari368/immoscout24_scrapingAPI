@@ -112,7 +112,7 @@ app.post("/sonstiges", async (req, res) => {
 }); 
 
 app.post("/sendMessage", async (req, res) => {
-    const { url, Browser_WS, message, Salutation, Forename, Surname, Company, Email, phone} = req.body;
+    const { url, Browser_WS,baseID,contactID,tableID, message, Salutation, Forename, Surname, Company, Email, phone} = req.body;
     
     // Validate URL
     try {
@@ -138,15 +138,13 @@ app.post("/sendMessage", async (req, res) => {
         res.status(200).send();
         const data= await sendMessage(url,Browser_WS, message, Salutation, Forename, Surname, Company, Email, phone)
         callWebhook('https://hook.eu2.make.com/94fza09rtgsuhog4scji249el2jwikao', {
-            baseID:'34567',
-            contactID:'34567',
+            baseID,contactID,tableID,
             statue:'success',
         })
     } catch (error) {
         console.log(error);
         callWebhook('https://hook.eu2.make.com/94fza09rtgsuhog4scji249el2jwikao', {
-            baseID:'34567',
-            contactID:'34567',
+            baseID,contactID,tableID,
             statue:'failed',
             error:error.message,
         })
