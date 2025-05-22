@@ -98,7 +98,6 @@ async function fillForm(page, message, Salutation, Forename, Surname, Company, E
   await page.click('button[data-testid="contact-button"]');
 
   console.log("filling the form...");
-  await page.screenshot({ path: 'screenshot.png' });
   await page.waitForSelector('#message');
   await page.type('#message', message ); 
   await page.select('select[data-testid="salutation"]', Salutation);
@@ -108,6 +107,12 @@ async function fillForm(page, message, Salutation, Forename, Surname, Company, E
   await page.type('input[data-testid="emailAddress"]', Email);
   await page.type('input[data-testid="phoneNumber"]', phone);
   console.log('filling form done');
+  await page.waitForSelector('button[type="submit"].Button_button-primary__6QTnx');
+  console.log("submiting form...");
+  await page.click('button[type="submit"].Button_button-primary__6QTnx');
+  console.log("form submited");
+
+
 }
 
 module.exports = { getData, close_popup, getSonstiges, fillForm }
