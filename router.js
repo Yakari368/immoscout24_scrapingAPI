@@ -112,7 +112,7 @@ app.post("/sonstiges", async (req, res) => {
 }); 
 
 app.post("/sendMessage", async (req, res) => {
-    const { url, Browser_WS,callBackWebhook,contactID, message, Salutation, Forename, Surname, Company, Email, phone} = req.body;
+    const { url, Browser_WS,callBackWebhook,contactID, message, outreachStage, Salutation, Forename, Surname, Company, Email, phone} = req.body;
     
     // Validate URL
     try {
@@ -138,13 +138,13 @@ app.post("/sendMessage", async (req, res) => {
         res.status(200).send();
         const data= await sendMessage(url,Browser_WS, message, Salutation, Forename, Surname, Company, Email, phone)
         callWebhook(callBackWebhook, {
-            baseID,contactID,tableID,
+            contactID,message,outreachStage,
             statue:'success',
         })
     } catch (error) {
         console.log(error);
         callWebhook(callBackWebhook, {
-            baseID,contactID,tableID,
+            contactID,
             statue:'failed',
             error:error.message,
         })
