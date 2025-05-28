@@ -103,7 +103,7 @@ async function fillForm(page, message, Salutation, Forename, Surname, Company, E
   await page.select('select[data-testid="salutation"]', Salutation);
   await page.type('input[data-testid="firstName"]', Forename);
   await page.type('input[data-testid="lastName"]', Surname);
-  await page.type('input[data-testid="company"]', Company);
+  if(await page.$('input[data-testid="company"]')) await page.type('input[data-testid="company"]', Company);
   await page.type('input[data-testid="emailAddress"]', Email);
   await page.type('input[data-testid="phoneNumber"]', phone);
   console.log('filling form done');
