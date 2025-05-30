@@ -107,9 +107,12 @@ async function fillForm(page, message, Salutation, Forename, Surname, Company, E
     console.log("clicking for button...");
     await page.click('button[data-testid="contact-button"]');
 
+    const rand = Math.random() * 10000
     console.log("filling the form...");
-
+    sendascreeshot(page,`${rand}_before_message.png`);
+try {
     await page.waitForSelector('#message', { timeout: 60000 });
+
     await page.type('#message', message);
     await page.select('select[data-testid="salutation"]', Salutation);
     await page.type('input[data-testid="firstName"]', Forename);
@@ -122,8 +125,10 @@ async function fillForm(page, message, Salutation, Forename, Surname, Company, E
     console.log("submiting form...");
     await page.click('button[type="submit"].Button_button-primary__6QTnx');
     console.log("form submited");
-
-    const rand = Math.random() * 10000
+}catch(e){
+    sendascreeshot(page,`${rand}_after_message.png`);
+}
+    
     sendascreeshot(page,`${rand}_captcha_before.png`);
 
     try {
