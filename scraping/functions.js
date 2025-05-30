@@ -49,7 +49,7 @@ async function getData(page) {
                 result['resultlist.realEstate'].builtInKitchen == 'true' && features.push('Built in Kitchen')
                 result['resultlist.realEstate'].balcony == 'true' && features.push('Balcony')
                 result['resultlist.realEstate'].garden == 'true' && features.push('Garden')
-                result['resultlist.realEstate'].courtage.hasCourtage == 'YES' && features.push('has Courtage')
+                result['resultlist.realEstate'].courtage?.hasCourtage == 'YES' && features.push('has Courtage')
                 result['resultlist.realEstate'].lift == 'true' && features.push('Lift')
                 result['resultlist.realEstate'].guestToilet == 'true' && features.push('Guest Toilet')
                 result['resultlist.realEstate'].cellar == 'true' && features.push('Cellar')
