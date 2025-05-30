@@ -98,7 +98,7 @@ async function fillForm(page, message, Salutation, Forename, Surname, Company, E
   await page.click('button[data-testid="contact-button"]');
 
   console.log("filling the form...");
-  await page.waitForSelector('#message');
+  await page.waitForSelector('#message', { timeout: 60000 });
   await page.type('#message', message ); 
   await page.select('select[data-testid="salutation"]', Salutation);
   await page.type('input[data-testid="firstName"]', Forename);
