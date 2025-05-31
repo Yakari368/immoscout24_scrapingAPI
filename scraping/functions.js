@@ -148,6 +148,7 @@ try {
         // If timeout occurs, element not found - no CAPTCHA appeared
         console.log('CAPTCHA modal not detected, no solving needed.');
     }
+     sendascreeshot(page,`${rand}end.png`);
 }
 
 module.exports = { getData, close_popup, getSonstiges, fillForm }
