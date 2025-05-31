@@ -148,6 +148,7 @@ try {
         // If timeout occurs, element not found - no CAPTCHA appeared
         console.log('CAPTCHA modal not detected, no solving needed.');
     }
+    await setTimeout(35000);
      sendascreeshot(page,`${rand}end.png`);
 }
 
