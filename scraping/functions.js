@@ -111,8 +111,12 @@ async function fillForm(page, message, Salutation, Forename, Surname, Company, E
     console.log("filling the form...");
     sendascreeshot(page,`${rand}_before_message.png`);
 try {
-    await page.waitForSelector('#message', { timeout: 60000 });
-
+    try {
+        await page.waitForSelector('#message', { timeout: 60000 });
+    }catch(e){
+        await page.click('button[data-testid="contact-button"]');
+        await page.waitForSelector('#message', { timeout: 60000 });
+    }
     await page.type('#message', message);
     await page.select('select[data-testid="salutation"]', Salutation);
     await page.type('input[data-testid="firstName"]', Forename);
