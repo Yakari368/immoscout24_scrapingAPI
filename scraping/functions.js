@@ -131,11 +131,12 @@ async function fillForm(page, message, Salutation, Forename, Surname, Company, E
 
     try {
         // Check if CAPTCHA image exists inside the modal
-        await waitForSelector('.captcha-image-container');
+        await page.waitForSelector('div.captcha-image-container.one-whole', { visible: true });
         console.log('CAPTCHA block detected.');
         return 'captcha';
 
     } catch (e) {
+        console.log(e)
         try {
             await page.waitForSelector('#is24-expose-cosma-modal .StatusMessage_status-title__bNvQX');
             // Check if success message "Nachricht gesendet" is present
