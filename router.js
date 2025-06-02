@@ -112,7 +112,7 @@ app.post("/sonstiges", async (req, res) => {
 }); 
 
 app.post("/sendMessage", async (req, res) => {
-    const { url, Browser_WS,callBackWebhook,contactID, message, outreachStage, Salutation, Forename, Surname, Company, Email, phone} = req.body;
+    const data= await sendMessage(url,Browser_WS.replace('${sessionId}', `session_${Date.now()}_${Math.floor(Math.random() * 1000)}`), message, Salutation, Forename, Surname, Company, Email, phone)
     
     // Validate URL
     try {
