@@ -134,34 +134,28 @@ async function fillForm(page, message, Salutation, Forename, Surname, Company, E
         await page.waitForSelector('#is24-expose-cosma-modal');
 
         // Check if CAPTCHA image exists inside the modal
-        const label = await page.$('label.TextInput_input-label__e-ORN[for="userAnswer"]');
-
-        if (label) {
-            console.log('CAPTCHA block detected.');
-            return 'captcha';
-        }
-
-        // Check if success message "Nachricht gesendet" is present
-        const successMessage = await page.$eval(
-            '#is24-expose-cosma-modal .StatusMessage_status-title__bNvQX',
-            el => el.textContent.trim()
-        ).catch(() => null);
-
-        console.log('Success message:', successMessage);
-
-        if (successMessage && successMessage.includes('Nachricht gesendet')) {
-            console.log('Success message detected.');
-            return 'success';
-        }
-
-        return 'Unkown';
-
+        await waitForSelector('label.TextInput_input-label__e-ORN[for="userAnswer"]');
+        console.log('CAPTCHA block detected.');
+        return 'captcha';
 
     } catch (e) {
-        // If timeout occurs, element not found - no CAPTCHA appeared
-        throw new Error('problem identifiying captcha or success message');
-    }
+        try {
+            await page.waitForSelector('#is24-expose-cosma-modal .StatusMessage_status-title__bNvQX');
+            // Check if success message "Nachricht gesendet" is present
+            const successMessage = await page.$eval(
+                '#is24-expose-cosma-modal .StatusMessage_status-title__bNvQX',
+                el => el.textContent.trim()
+            ).catch(() => null);
 
+            console.log('Success message:', successMessage);
+            return 'success';
+
+        } catch (e) {
+            // If timeout occurs, element not found - no CAPTCHA appeared
+            throw new Error('problem identifiying no captcha or success message detected');
+        }
+
+    }
 }
 
 module.exports = { getData, close_popup, getSonstiges, fillForm }
