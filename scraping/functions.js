@@ -151,8 +151,9 @@ async function fillForm(page, message, Salutation, Forename, Surname, Company, E
             return 'success';
 
         } catch (e) {
+            console.log(e)
             // If timeout occurs, element not found - no CAPTCHA appeared
-            throw new Error('problem identifiying no captcha or success message detected',e);
+            throw new Error('problem identifiying no captcha or success message detected');
         }
 
     }
