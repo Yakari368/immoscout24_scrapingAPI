@@ -112,7 +112,7 @@ app.post("/sonstiges", async (req, res) => {
 }); 
 
 app.post("/sendMessage", async (req, res) => {
-    const data= await sendMessage(url,Browser_WS.replace('${sessionId}', `session_${Date.now()}_${Math.floor(Math.random() * 1000)}`), message, Salutation, Forename, Surname, Company, Email, phone)
+    const { url, Browser_WS,callBackWebhook,contactID, message, outreachStage, Salutation, Forename, Surname, Company, Email, phone} = req.body;
     
     // Validate URL
     try {
@@ -136,7 +136,7 @@ app.post("/sendMessage", async (req, res) => {
 
     try {
         res.status(200).send();
-        const data= await sendMessage(url,Browser_WS, message, Salutation, Forename, Surname, Company, Email, phone)
+        const data= await sendMessage(url,Browser_WS.replace('${sessionId}', `session_${Date.now()}_${Math.floor(Math.random() * 1000)}`), message, Salutation, Forename, Surname, Company, Email, phone)
         callWebhook(callBackWebhook, {
             contactID,message,outreachStage,
             statue:data,
