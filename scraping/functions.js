@@ -134,9 +134,9 @@ async function fillForm(page, message, Salutation, Forename, Surname, Company, E
         await page.waitForSelector('#is24-expose-cosma-modal');
 
         // Check if CAPTCHA image exists inside the modal
-        const captchaExists = await page.$('#is24-expose-cosma-modal img[src*="captcha/getimage.go"]') !== null;
+        const label = await page.$('label.TextInput_input-label__e-ORN[for="userAnswer"]');
 
-        if (captchaExists) {
+        if (label) {
             console.log('CAPTCHA block detected.');
             return 'captcha';
         }
@@ -146,6 +146,8 @@ async function fillForm(page, message, Salutation, Forename, Surname, Company, E
             '#is24-expose-cosma-modal .StatusMessage_status-title__bNvQX',
             el => el.textContent.trim()
         ).catch(() => null);
+
+        console.log('Success message:', successMessage);
 
         if (successMessage && successMessage.includes('Nachricht gesendet')) {
             console.log('Success message detected.');
