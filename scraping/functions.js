@@ -4,7 +4,7 @@ const { setTimeout } = require('node:timers/promises');
 async function close_popup(page) {
     try {
         await setTimeout(35000);
-        await page.waitForSelector('#usercentrics-root');
+        await page.waitForSelector('#usercentrics-root', { timeout: 60000 });
         const shadowHost = await page.$('#usercentrics-root');
         const shadowRoot = await shadowHost.evaluateHandle(el => el.shadowRoot);
         const close_btn = await shadowRoot.$('button[data-testid="uc-accept-all-button"]');
@@ -90,66 +90,76 @@ async function getSonstiges(page) {
     });
     return allText
 }
-async function sendascreeshot(page,title) {
-    const screenshotBase64 = await page.screenshot({ encoding: 'base64' });
-    const imageData = `data:image/png;base64,${screenshotBase64}`;
-    const webhookUrl = 'https://hook.eu2.make.com/nxwkee7ji943muax6fufpoj109fylrlr';
-    await fetch(webhookUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ image: imageData,title: title }),
-    });
-}
+
 
 async function fillForm(page, message, Salutation, Forename, Surname, Company, Email, phone) {
-    console.log("loking for button...");
-    await page.waitForSelector('button[data-testid="contact-button"]');
-    console.log("clicking for button...");
-    await page.click('button[data-testid="contact-button"]');
 
-    const rand = Math.random() * 10000
-    console.log("filling the form...");
-    sendascreeshot(page,`${rand}_before_message.png`);
-try {
     try {
-        await page.waitForSelector('#message', { timeout: 60000 });
-    }catch(e){
-        await page.click('button[data-testid="contact-button"]');
-        await page.waitForSelector('#message', { timeout: 60000 });
+        console.log("loking for button...");
+        await page.waitForSelector('button[data-testid="contact-button"]');
+        console.log("clicking for button...");
+        await page.click('button[data-testid="contact-button"]');    
+    } catch (error) {
+        throw new Error('problem showing the form');
     }
-    await page.type('#message', message);
-    await page.select('select[data-testid="salutation"]', Salutation);
-    await page.type('input[data-testid="firstName"]', Forename);
-    await page.type('input[data-testid="lastName"]', Surname);
-    if (await page.$('input[data-testid="company"]')) await page.type('input[data-testid="company"]', Company);
-    await page.type('input[data-testid="emailAddress"]', Email);
-    await page.type('input[data-testid="phoneNumber"]', phone);
-    console.log('filling form done');
-    await page.waitForSelector('button[type="submit"].Button_button-primary__6QTnx');
-    console.log("submiting form...");
-    await page.click('button[type="submit"].Button_button-primary__6QTnx');
-    console.log("form submited");
-}catch(e){
-    sendascreeshot(page,`${rand}_after_message.png`);
-}
     
-    sendascreeshot(page,`${rand}_captcha_before.png`);
+
+    console.log("filling the form...");
 
     try {
-        await page.waitForSelector('#is24-expose-cosma-modal');
-        sendascreeshot(page,`${rand}_captcha_mid.png`);
-        // If the CAPTCHA modal is detected, solve the CAPTCHA
-        const client = await page.target().createCDPSession();
-        const { status } = await client.send('Captcha.solve', { detectTimeout: 30000 });
-        console.log(`CAPTCHA solve status: ${status}`);
+        try {
+            await page.waitForSelector('#message', { timeout: 60000 });
+        } catch (e) {
+            await page.click('button[data-testid="contact-button"]');
+            await page.waitForSelector('#message', { timeout: 60000 });
+        }
+        await page.type('#message', message);
+        await page.select('select[data-testid="salutation"]', Salutation);
+        await page.type('input[data-testid="firstName"]', Forename);
+        await page.type('input[data-testid="lastName"]', Surname);
+        if (await page.$('input[data-testid="company"]')) await page.type('input[data-testid="company"]', Company);
+        await page.type('input[data-testid="emailAddress"]', Email);
+        await page.type('input[data-testid="phoneNumber"]', phone);
+        console.log('filling form done');
+        await page.waitForSelector('button[type="submit"].Button_button-primary__6QTnx');
+        console.log("submiting form...");
+        await page.click('button[type="submit"].Button_button-primary__6QTnx');
+        console.log("form submited");
+    } catch (e) {
+        throw new Error('problem filling/submiting form');
+    }
 
-        sendascreeshot(page,`${rand}_captcha_after.png`);
+    try {
+        // Wait for the modal container to appear
+        await page.waitForSelector('#is24-expose-cosma-modal');
+
+        // Check if CAPTCHA image exists inside the modal
+        const captchaExists = await page.$('#is24-expose-cosma-modal img[src*="captcha/getimage.go"]') !== null;
+
+        if (captchaExists) {
+            console.log('CAPTCHA block detected.');
+            return 'captcha';
+        }
+
+        // Check if success message "Nachricht gesendet" is present
+        const successMessage = await page.$eval(
+            '#is24-expose-cosma-modal .StatusMessage_status-title__bNvQX',
+            el => el.textContent.trim()
+        ).catch(() => null);
+
+        if (successMessage && successMessage.includes('Nachricht gesendet')) {
+            console.log('Success message detected.');
+            return 'success';
+        }
+
+        return 'Unkown';
+
+
     } catch (e) {
         // If timeout occurs, element not found - no CAPTCHA appeared
-        console.log('CAPTCHA modal not detected, no solving needed.');
+        throw new Error('problem identifiying captcha or success message');
     }
-    await setTimeout(35000);
-     sendascreeshot(page,`${rand}end.png`);
+
 }
 
 module.exports = { getData, close_popup, getSonstiges, fillForm }
