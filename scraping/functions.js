@@ -130,11 +130,8 @@ async function fillForm(page, message, Salutation, Forename, Surname, Company, E
     }
 
     try {
-        // Wait for the modal container to appear
-        await page.waitForSelector('#is24-expose-cosma-modal');
-
         // Check if CAPTCHA image exists inside the modal
-        await waitForSelector('label.TextInput_input-label__e-ORN[for="userAnswer"]');
+        await waitForSelector('.captcha-image-container');
         console.log('CAPTCHA block detected.');
         return 'captcha';
 
