@@ -139,7 +139,7 @@ app.post("/sendMessage", async (req, res) => {
         const data= await sendMessage(url,Browser_WS, message, Salutation, Forename, Surname, Company, Email, phone)
         callWebhook(callBackWebhook, {
             contactID,message,outreachStage,
-            statue:'success',
+            statue:data,
         })
     } catch (error) {
         console.log(error);
