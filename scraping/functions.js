@@ -92,7 +92,7 @@ async function getSonstiges(page) {
 }
 
 
-async function fillForm(page, message, Salutation, Forename, Surname, Company, Email, phone) {
+async function fillForm(page, message, Salutation, Forename, Surname, Company, Email, phone,street,houseNumber,postcode,city) {
 
     try {
         console.log("loking for button...");
@@ -120,6 +120,10 @@ async function fillForm(page, message, Salutation, Forename, Surname, Company, E
         if (await page.$('input[data-testid="company"]')) await page.type('input[data-testid="company"]', Company);
         await page.type('input[data-testid="emailAddress"]', Email);
         await page.type('input[data-testid="phoneNumber"]', phone);
+        if (await page.$('input[data-testid="street"]')) await page.type('input[data-testid="street"]', street);
+        if (await page.$('input[data-testid="houseNumber"]')) await page.type('input[data-testid="houseNumber"]', houseNumber);
+        if (await page.$('input[data-testid="postcode"]')) await page.type('input[data-testid="postcode"]', postcode);
+        if (await page.$('input[data-testid="city"]')) await page.type('input[data-testid="city"]', city);
         console.log('filling form done');
         await page.waitForSelector('button[type="submit"].Button_button-primary__6QTnx');
         console.log("submiting form...");

@@ -70,7 +70,7 @@ async function scrapeSonstiges(url,BROWSER_WS) {
     return JSONResult
 }
 
-async function sendMessage(url, BROWSER_WS, message, Salutation, Forename, Surname, Company, Email, phone) {
+async function sendMessage(url, BROWSER_WS, message, Salutation, Forename, Surname, Company, Email, phone,street,houseNumber,postcode,city) {
     console.log("Connecting to browser...");
     const browser = await puppeteer.connect({
         browserWSEndpoint: BROWSER_WS,
@@ -81,7 +81,7 @@ async function sendMessage(url, BROWSER_WS, message, Salutation, Forename, Surna
     console.log("Navigated! Waiting for popup...");
     await close_popup(page);
     console.log("Sending Message..");
-    const JSONResult = await fillForm(page, message, Salutation, Forename, Surname, Company, Email, phone)
+    const JSONResult = await fillForm(page, message, Salutation, Forename, Surname, Company, Email, phone,street,houseNumber,postcode,city)
     console.log("data extracted! closing browser ...");
     await browser.close();
     return JSONResult
