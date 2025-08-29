@@ -1,13 +1,18 @@
 const puppeteer = require("puppeteer-core");
+const { setTimeout } = require('node:timers/promises');
 
 async function close_popup(page) {
     try {
-        const close_btn = await page.waitForSelector('button[data-testid="uc-accept-all-button"]', { timeout: 25000, visible: true });
+        await setTimeout(35000);
+        await page.waitForSelector('#usercentrics-root', { timeout: 60000 });
+        const shadowHost = await page.$('#usercentrics-root');
+        const shadowRoot = await shadowHost.evaluateHandle(el => el.shadowRoot);
+        const close_btn = await shadowRoot.$('button[data-testid="uc-accept-all-button"]');
         console.log("Popup appeared! Closing...");
         await close_btn.click();
         console.log("Popup closed!");
     } catch (e) {
-        console.log("Popup didn't appear.");
+        console.log("Popup didn't appear.", e);
     }
 }
 
@@ -21,31 +26,30 @@ async function getData(page) {
         let resultObject = [];
         resultList.map((result, index) => {
             if (result['resultlist.realEstate'].privateOffer == 'true') {
-
                 let gallery = [];
-                const attachment = result['resultlist.realEstate'].galleryAttachments.attachment
+                const attachment = result['resultlist.realEstate'].galleryAttachments?.attachment
                 if (Array.isArray(attachment)) {
                     attachment.map(image => {
                         image = image.urls[0].url["@href"]
                         const endIndex = image.indexOf('ORIG');
                         gallery.push({
-                            "url":image.substring(0, endIndex).trim(),
+                            "url": image.substring(0, endIndex).trim(),
                         })
 
                     })
-                } else if (attachment.urls) {
+                } else if (attachment?.urls) {
                     const image = attachment.urls[0].url["@href"]
                     const endIndex = image.indexOf('ORIG');
                     gallery.push({
-                        "url":image.substring(0, endIndex).trim(),
+                        "url": image.substring(0, endIndex).trim(),
                     })
                 }
 
-                let features=[]
+                let features = []
                 result['resultlist.realEstate'].builtInKitchen == 'true' && features.push('Built in Kitchen')
                 result['resultlist.realEstate'].balcony == 'true' && features.push('Balcony')
                 result['resultlist.realEstate'].garden == 'true' && features.push('Garden')
-                result['resultlist.realEstate'].courtage.hasCourtage == 'YES' && features.push('has Courtage')
+                result['resultlist.realEstate'].courtage?.hasCourtage == 'YES' && features.push('has Courtage')
                 result['resultlist.realEstate'].lift == 'true' && features.push('Lift')
                 result['resultlist.realEstate'].guestToilet == 'true' && features.push('Guest Toilet')
                 result['resultlist.realEstate'].cellar == 'true' && features.push('Cellar')
@@ -62,21 +66,95 @@ async function getData(page) {
                         livingSpace: result['resultlist.realEstate'].livingSpace + 'm²',
                         numberOfRooms: result['resultlist.realEstate'].numberOfRooms,
                         constructionYear: result['resultlist.realEstate'].constructionYear,
-                        estateInfo:features,
+                        estateInfo: features,
                         monthlyRate: result['resultlist.realEstate'].monthlyRate,
                         modificationDate: result["@modification"],
-                        url:`https://www.immobilienscout24.de/expose/${result.realEstateId}`,
+                        url: `https://www.immobilienscout24.de/expose/${result.realEstateId}`,
                     })
             }
         })
-        
+
         return resultObject
     } catch (error) {
         console.log(error);
-        
+
         return new Error(error)
     }
 
 }
 
-module.exports = { getData, close_popup }
+async function getSonstiges(page) {
+    const allText = await page.evaluate(() => {
+        const grandfatherDiv = document.querySelector('div.content-section-first'); // Replace with your CSS selector
+        return grandfatherDiv ? grandfatherDiv.textContent.trim().replace('\n', '').replace(/\s+/g, ' ').replace(/{[^}]*}/g, '').trim() : null;
+    });
+    return allText
+}
+
+
+async function fillForm(page, message, Salutation, Forename, Surname, Company, Email, phone) {
+
+    try {
+        console.log("loking for button...");
+        await page.waitForSelector('button[data-testid="contact-button"]');
+        console.log("clicking for button...");
+        await page.click('button[data-testid="contact-button"]');    
+    } catch (error) {
+        throw new Error('problem showing the form');
+    }
+    
+
+    console.log("filling the form...");
+
+    try {
+        try {
+            await page.waitForSelector('#message', { timeout: 60000 });
+        } catch (e) {
+            await page.click('button[data-testid="contact-button"]');
+            await page.waitForSelector('#message', { timeout: 60000 });
+        }
+        await page.type('#message', message);
+        await page.select('select[data-testid="salutation"]', Salutation);
+        await page.type('input[data-testid="firstName"]', Forename);
+        await page.type('input[data-testid="lastName"]', Surname);
+        if (await page.$('input[data-testid="company"]')) await page.type('input[data-testid="company"]', Company);
+        await page.type('input[data-testid="emailAddress"]', Email);
+        await page.type('input[data-testid="phoneNumber"]', phone);
+        console.log('filling form done');
+        await page.waitForSelector('button[type="submit"].Button_button-primary__6QTnx');
+        console.log("submiting form...");
+        await page.click('button[type="submit"].Button_button-primary__6QTnx');
+        console.log("form submited");
+    } catch (e) {
+        throw new Error('problem filling/submiting form');
+    }
+
+    try {
+        // Check if CAPTCHA image exists inside the modal
+        await page.waitForSelector('div.captcha-image-container.one-whole', { visible: true });
+        console.log('CAPTCHA block detected.');
+        return 'captcha';
+
+    } catch (e) {
+        console.log(e)
+        try {
+            await page.waitForSelector('#is24-expose-cosma-modal .StatusMessage_status-title__bNvQX');
+            // Check if success message "Nachricht gesendet" is present
+            const successMessage = await page.$eval(
+                '#is24-expose-cosma-modal .StatusMessage_status-title__bNvQX',
+                el => el.textContent.trim()
+            ).catch(() => null);
+
+            console.log('Success message:', successMessage);
+            return 'success';
+
+        } catch (e) {
+            console.log(e)
+            // If timeout occurs, element not found - no CAPTCHA appeared
+            throw new Error('problem identifiying no captcha or success message detected');
+        }
+
+    }
+}
+
+module.exports = { getData, close_popup, getSonstiges, fillForm }
