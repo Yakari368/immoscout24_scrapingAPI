@@ -30,12 +30,13 @@ async function getData(page) {
                 const attachment = result['resultlist.realEstate'].galleryAttachments?.attachment
                 if (Array.isArray(attachment)) {
                     attachment.map(image => {
-                        image = image.urls[0].url["@href"]
-                        const endIndex = image.indexOf('ORIG');
-                        gallery.push({
-                            "url": image.substring(0, endIndex).trim(),
-                        })
-
+                        image = image.urls?[0].url["@href"]
+                        if(image){
+                            const endIndex = image.indexOf('ORIG');
+                            gallery.push({
+                                "url": image.substring(0, endIndex).trim(),
+                            })
+                        }
                     })
                 } else if (attachment?.urls) {
                     const image = attachment.urls[0].url["@href"]
