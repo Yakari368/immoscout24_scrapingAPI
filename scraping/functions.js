@@ -85,6 +85,33 @@ async function getData(page) {
 }
 
 async function getSonstiges(page) {
+    // First, try to click the "show more" button if it exists and is visible
+    try {
+        // Wait for the grandfather div to be present
+        await page.waitForSelector('div.content-section-first', { timeout: 5000 });
+        
+        // Check if show more button exists and is visible
+        const showMoreExists = await page.evaluate(() => {
+            const grandfatherDiv = document.querySelector('div.content-section-first');
+            if (!grandfatherDiv) return false;
+            
+            const showMoreDiv = grandfatherDiv.querySelector('div.show-more');
+            if (!showMoreDiv) return false;
+            
+            const style = window.getComputedStyle(showMoreDiv);
+            return style.display !== 'none';
+        });
+        
+        if (showMoreExists) {
+            // Click using Puppeteer's click method (more reliable)
+            await page.click('div.content-section-first div.show-more a.internal-link');
+            // Wait for content to expand
+            await setTimeout(1000);
+        }
+    } catch (error) {
+        console.log('Show more button not found or not clickable:', error);
+        // Continue anyway - maybe the button doesn't exist
+    }
     const allText = await page.evaluate(() => {
         const grandfatherDiv = document.querySelector('div.content-section-first'); // Replace with your CSS selector
         return grandfatherDiv ? grandfatherDiv.textContent.trim().replace('\n', '').replace(/\s+/g, ' ').replace(/{[^}]*}/g, '').trim() : null;
