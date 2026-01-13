@@ -1,5 +1,6 @@
 const express = require("express");
 const { scrape,isAvailable, scrapeSonstiges, sendMessage,callWebhook } = require("./scraping/main");
+const { sendTestEmail } = require('./test-email-send')
 
 
 const app = express();
@@ -111,8 +112,23 @@ app.post("/sonstiges", async (req, res) => {
     }
 }); 
 
+const textToHtml = (rawText) => {
+
+    return  `
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+  </head>
+  <body style="font-family:Arial,Helvetica,sans-serif;font-size:14px;line-height:1.5;">
+    ${rawText.replace(/\n/g, '<br>')}
+  </body>
+</html>
+`;
+};
+
 app.post("/sendMessage", async (req, res) => {
-    const { url, Browser_WS,callBackWebhook,contactID, message, outreachStage, Salutation, Forename, Surname, Company, Email, phone,street,houseNumber,postcode,city} = req.body;
+    const { url, Browser_WS,callBackWebhook,contactID, message, outreachStage, Salutation, Forename, Surname, Company, Email, phone,street,houseNumber,postcode,city, isTesting = false} = req.body;
     
     // Validate URL
     try {
@@ -136,7 +152,10 @@ app.post("/sendMessage", async (req, res) => {
 
     try {
         res.status(200).send();
-        const data= await sendMessage(url,Browser_WS.replace('${sessionId}', `session_${Date.now()}_${Math.floor(Math.random() * 1000)}`), message, Salutation, Forename, Surname, Company, Email, phone,street,houseNumber,postcode,city)
+        
+        const data= isTesting ?
+        await sendTestEmail({subject: 'subject: Neue Nachricht', text: message, html: textToHtml(message), replyTo: Email}) 
+        : await sendMessage(url,Browser_WS.replace('${sessionId}', `session_${Date.now()}_${Math.floor(Math.random() * 1000)}`), message, Salutation, Forename, Surname, Company, Email, phone,street,houseNumber,postcode,city)
         callWebhook(callBackWebhook, {
             contactID,message,outreachStage,
             statue:data,
