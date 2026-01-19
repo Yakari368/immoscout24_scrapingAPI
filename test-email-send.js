@@ -56,8 +56,9 @@ async function sendEmailInternal({ to, from, replyTo, subject, text, html }) {
 // });
 
 module.exports.sendTestEmail = async ({subject, text, html, replyTo}) => {
+    let ret = {success: false, error: "noninitialized"}
     try {
-        const ret = await sendEmailInternal({
+        ret = await sendEmailInternal({
             to: ['milton.segundo@aiautomationonline.de', 'kevin@aiautomationonline.de'],
             from: ZOHO_MAIL,
             replyTo: [replyTo],
