@@ -1,15 +1,18 @@
 const nodemailer = require('nodemailer');
 
-const ZOHO_MAIL = 'us@aiautomationonline.de';
-const ZOHO_APP_PASSWORD = 'TQ+utU%TANS9gSmY';
+const SMTP_USER = process.env.SMTP_USER || 'test@test.com';
+const SMTP_PASSWORD = process.env.SMTP_PASSWORD || '';
+const SMTP_PORT = process.env.SMTP_PORT || '465';
+const SMTP_SECURE = process.env.SMTP_PORT || 'off';
+const SMTP_HOST = process.env.SMTP_HOST || ''
 
 const transporter = nodemailer.createTransport({
-    host: 'smtppro.zoho.eu',
-    port: 465,
-    secure: true,
+    host: SMTP_HOST,
+    port: Number.parseInt(SMTP_PORT),
+    secure: SMTP_SECURE === 'on',
     auth: {
-        user: ZOHO_MAIL,
-        pass: ZOHO_APP_PASSWORD
+        user: SMTP_USER,
+        pass: SMTP_PASSWORD
     }
 });
 
@@ -48,7 +51,7 @@ async function sendEmailInternal({ to, from, replyTo, subject, text, html }) {
 // Usage with multiple reply-to addresses
 // sendEmailInternal({
 //     to: ['milton.segundo@aiautomationonline.de', 'info@aiautomationonline.de'],
-//     from: ZOHO_MAIL,
+//     from: SMTP_USER,
 //     replyTo: ['milton.segundo@aiautomationonline.de'],
 //     subject: 'Test Email',
 //     text: 'Hello!',
@@ -60,7 +63,7 @@ module.exports.sendTestEmail = async ({subject, text, html, replyTo}) => {
     try {
         ret = await sendEmailInternal({
             to: ['milton.segundo@aiautomationonline.de', 'kevin@aiautomationonline.de'],
-            from: ZOHO_MAIL,
+            from: SMTP_USER,
             replyTo: [replyTo],
             subject,
             text,
