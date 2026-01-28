@@ -3,7 +3,7 @@ const nodemailer = require('nodemailer');
 const SMTP_USER = process.env.SMTP_USER || 'test@test.com';
 const SMTP_PASSWORD = process.env.SMTP_PASSWORD || '';
 const SMTP_PORT = process.env.SMTP_PORT || '465';
-const SMTP_SECURE = process.env.SMTP_PORT || 'off';
+const SMTP_SECURE = process.env.SMTP_SECURE || 'off';
 const SMTP_HOST = process.env.SMTP_HOST || ''
 
 const transporter = nodemailer.createTransport({
@@ -50,9 +50,9 @@ async function sendEmailInternal({ to, from, replyTo, subject, text, html }) {
 
 // Usage with multiple reply-to addresses
 // sendEmailInternal({
-//     to: ['milton.segundo@aiautomationonline.de', 'info@aiautomationonline.de'],
+//     to: ['test@test1.com', 'test@test2.com'],
 //     from: SMTP_USER,
-//     replyTo: ['milton.segundo@aiautomationonline.de'],
+//     replyTo: ['test@test1.com'],
 //     subject: 'Test Email',
 //     text: 'Hello!',
 //     html: '<h1>Hello</h1>',
