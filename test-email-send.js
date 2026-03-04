@@ -10,6 +10,7 @@ const SMTP_SECURE = process.env.SMTP_SECURE || 'off';
 const SMTP_HOST = process.env.SMTP_HOST || ''
 const MAILGUN_API_KEY = process.env.MAILGUN_API_KEY || '';
 const MAILGUN_DOMAIN = process.env.MAILGUN_DOMAIN || '';
+const MAILGUN_FROM = process.env.MAILGUN_FROM || '';
 
 const mailgun = new Mailgun(FormData);
 const mg = mailgun.client({
